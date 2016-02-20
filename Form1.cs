@@ -45,23 +45,9 @@ namespace MD5Cracker
             }
         }
 
-        private void IsSlovnikovyUtok_CheckedChanged(object sender, EventArgs e)
-        {
-            if (IsSlovnikovyUtok.Checked)
-            {
-                tbSlovnikCesta.Enabled = true;
-                bNacistSlovnik.Enabled = true;
-            }
-            else 
-            {
-                tbSlovnikCesta.Enabled = false;
-                bNacistSlovnik.Enabled = false;
-            }
-        }
-
         private void bSpustitLamani_Click(object sender, EventArgs e)
         {
-            core.SpustitLamani(IsSlovnikovyUtok.Checked);
+            core.SpustitLamani(rbSlovnik.Checked, tbPasswordMask.Text);
         }
 
         private void bUlozitDo_Click(object sender, EventArgs e)
@@ -74,6 +60,37 @@ namespace MD5Cracker
             {
                 core.VystupniCesta = fileDlg.FileName;
                 tbVystupniCesta.Text = core.VystupniCesta;
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void rbSlovnik_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbSlovnik.Checked)
+            {
+                tbSlovnikCesta.Enabled = true;
+                bNacistSlovnik.Enabled = true;
+            }
+            else
+            {
+                tbSlovnikCesta.Enabled = false;
+                bNacistSlovnik.Enabled = false;
+            }
+        }
+
+        private void rbBruteForce_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbBruteForce.Checked)
+            {
+                tbPasswordMask.Enabled = true;
+            }
+            else
+            {
+                tbPasswordMask.Enabled = false;
             }
         }
     }
