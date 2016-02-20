@@ -31,13 +31,15 @@
             this.tbHeslaCesta = new System.Windows.Forms.TextBox();
             this.bNacistSoubor = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.IsSlovnikovyUtok = new System.Windows.Forms.CheckBox();
             this.bNacistSlovnik = new System.Windows.Forms.Button();
             this.tbSlovnikCesta = new System.Windows.Forms.TextBox();
             this.bSpustitLamani = new System.Windows.Forms.Button();
             this.bUlozitDo = new System.Windows.Forms.Button();
             this.tbVystupniCesta = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.rbSlovnik = new System.Windows.Forms.RadioButton();
+            this.rbBruteForce = new System.Windows.Forms.RadioButton();
+            this.tbPasswordMask = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // tbHeslaCesta
@@ -66,17 +68,6 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Soubor s hesly";
             // 
-            // IsSlovnikovyUtok
-            // 
-            this.IsSlovnikovyUtok.AutoSize = true;
-            this.IsSlovnikovyUtok.Location = new System.Drawing.Point(13, 54);
-            this.IsSlovnikovyUtok.Name = "IsSlovnikovyUtok";
-            this.IsSlovnikovyUtok.Size = new System.Drawing.Size(104, 17);
-            this.IsSlovnikovyUtok.TabIndex = 3;
-            this.IsSlovnikovyUtok.Text = "Slovníkový útok";
-            this.IsSlovnikovyUtok.UseVisualStyleBackColor = true;
-            this.IsSlovnikovyUtok.CheckedChanged += new System.EventHandler(this.IsSlovnikovyUtok_CheckedChanged);
-            // 
             // bNacistSlovnik
             // 
             this.bNacistSlovnik.Enabled = false;
@@ -100,7 +91,7 @@
             // 
             this.bSpustitLamani.BackColor = System.Drawing.Color.Red;
             this.bSpustitLamani.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bSpustitLamani.Location = new System.Drawing.Point(199, 116);
+            this.bSpustitLamani.Location = new System.Drawing.Point(199, 180);
             this.bSpustitLamani.Name = "bSpustitLamani";
             this.bSpustitLamani.Size = new System.Drawing.Size(75, 42);
             this.bSpustitLamani.TabIndex = 7;
@@ -134,23 +125,58 @@
             this.label2.TabIndex = 10;
             this.label2.Text = "Výstupní soubor";
             // 
+            // rbSlovnik
+            // 
+            this.rbSlovnik.AutoSize = true;
+            this.rbSlovnik.Location = new System.Drawing.Point(12, 54);
+            this.rbSlovnik.Name = "rbSlovnik";
+            this.rbSlovnik.Size = new System.Drawing.Size(103, 17);
+            this.rbSlovnik.TabIndex = 12;
+            this.rbSlovnik.TabStop = true;
+            this.rbSlovnik.Text = "Slovníkový útok";
+            this.rbSlovnik.UseVisualStyleBackColor = true;
+            this.rbSlovnik.CheckedChanged += new System.EventHandler(this.rbSlovnik_CheckedChanged);
+            // 
+            // rbBruteForce
+            // 
+            this.rbBruteForce.AutoSize = true;
+            this.rbBruteForce.Location = new System.Drawing.Point(12, 103);
+            this.rbBruteForce.Name = "rbBruteForce";
+            this.rbBruteForce.Size = new System.Drawing.Size(80, 17);
+            this.rbBruteForce.TabIndex = 13;
+            this.rbBruteForce.TabStop = true;
+            this.rbBruteForce.Text = "Brute Force";
+            this.rbBruteForce.UseVisualStyleBackColor = true;
+            this.rbBruteForce.CheckedChanged += new System.EventHandler(this.rbBruteForce_CheckedChanged);
+            // 
+            // tbPasswordMask
+            // 
+            this.tbPasswordMask.Enabled = false;
+            this.tbPasswordMask.Location = new System.Drawing.Point(12, 126);
+            this.tbPasswordMask.Name = "tbPasswordMask";
+            this.tbPasswordMask.Size = new System.Drawing.Size(181, 20);
+            this.tbPasswordMask.TabIndex = 14;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.tbPasswordMask);
+            this.Controls.Add(this.rbBruteForce);
+            this.Controls.Add(this.rbSlovnik);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.bUlozitDo);
             this.Controls.Add(this.tbVystupniCesta);
             this.Controls.Add(this.bSpustitLamani);
             this.Controls.Add(this.bNacistSlovnik);
             this.Controls.Add(this.tbSlovnikCesta);
-            this.Controls.Add(this.IsSlovnikovyUtok);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.bNacistSoubor);
             this.Controls.Add(this.tbHeslaCesta);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -161,13 +187,15 @@
         private System.Windows.Forms.TextBox tbHeslaCesta;
         private System.Windows.Forms.Button bNacistSoubor;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox IsSlovnikovyUtok;
         private System.Windows.Forms.Button bNacistSlovnik;
         private System.Windows.Forms.TextBox tbSlovnikCesta;
         private System.Windows.Forms.Button bSpustitLamani;
         private System.Windows.Forms.Button bUlozitDo;
         private System.Windows.Forms.TextBox tbVystupniCesta;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.RadioButton rbSlovnik;
+        private System.Windows.Forms.RadioButton rbBruteForce;
+        private System.Windows.Forms.TextBox tbPasswordMask;
     }
 }
 

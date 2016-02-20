@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -18,6 +19,7 @@ namespace MD5Cracker
         public string HeslaCesta { get; set; }
         public string SlovnikCesta { get; set; }
         public string VystupniCesta { get; set; }
+
         public void NacistSoubory(string cesta)
         {
             HeslaCesta = Path.GetFullPath(cesta);
@@ -31,50 +33,163 @@ namespace MD5Cracker
             }
         }
 
-        public void SpustitLamani(bool slovnik)
+        public void SpustitLamani(bool slovnik, string maska)
         {
-            Thread vlakno = new Thread(ZjistitHesla);
+            Thread vlakno = new Thread(delegate() { ZjistitHesla(slovnik, maska); });
             vlakno.Name = "Lámání MD5";
-            vlakno.Start(slovnik);
-            
+            vlakno.Start();
+
         }
 
-        void ZjistitHesla(object slovnik)
+        void ZjistitHesla(bool slovnik, string maska)
         {
+      
+            //Nešel by ten using přesunout přímo do té metody GetMd5Hash? (takhle ho musím opisovat i na řádku 106)
             using (MD5 md5Hash = MD5.Create())
             {
-                if ((bool)slovnik)
+                if (slovnik)
                 {
                     int prolomeno = 0;
                     foreach (string slovnikSlovo in File.ReadLines(SlovnikCesta, encoding))
                     {
                         string hashSlovnik = GetMd5Hash(md5Hash, slovnikSlovo);
 
-                        foreach (KeyValuePair<string,string> zaznam in data)
+                        foreach (KeyValuePair<string, string> zaznam in data)
                         {
-                           if (VerifyMd5Hash(zaznam.Value, hashSlovnik))
-                           {
-                              PridatProlomeneHeslo(loginId + zaznam.Key + ", " + md5Id + slovnikSlovo);   
-                              prolomeno++;
-                            if (data.Count == prolomeno)
+                            if (VerifyMd5Hash(zaznam.Value, hashSlovnik))
                             {
-PridatProlomeneHeslo(string.Format("Z {0} hesel bylo {1} prolomeno pomoci slovníkového útoku", data.Count, prolomeno ));
-return;
+                                PridatZaznamDoSouboru(loginId + zaznam.Key + ", " + md5Id + slovnikSlovo);
+                                prolomeno++;
+                                if (data.Count == prolomeno)
+                                {
+                                    PridatZaznamDoSouboru(string.Format("Z {0} hesel bylo {1} prolomeno pomoci slovníkového útoku", data.Count, prolomeno));
+                                    return;
+                                }
                             }
-                           }
                         }
                     }
-                    
+
+                }
+
+                else
+                {
+                    BruteForce(maska.Length, maska.Length, maska);
                 }
             }
         }
 
-        void PridatProlomeneHeslo(string radek)
+        void BruteForce(int min, int max, string type)
         {
-              using (StreamWriter writer = File.AppendText(VystupniCesta))
-              {
-                  writer.WriteLine(radek);
-              }            
+            if (max < min)
+                return;
+
+            char start = 'a';
+            char end = 'z';
+            int prolomeno = 0;
+
+            string test = "";
+
+            char[] maska = type.ToCharArray(0, type.Length);
+            ConvertType(ref start, ref end, maska[0].ToString());
+
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            PridatZaznamDoSouboru(string.Format("Hledání hesla ve tvaru {0} zahájeno ve {1}", type, DateTime.Now.TimeOfDay));
+
+            //přidal jsem rovnítka nebo to bylo dobře?
+            if (test.Length <= min && test.Length <= max)
+                AddLetter(ref test, min, max, start, end, ref prolomeno, -1, type, ref stopwatch);
+        }
+
+        void BruteForce(string format)
+        {
+
+        }
+
+        void AddLetter(ref string test, int min, int max, char start, char end, ref int prolomeno, int pozice, string maska, ref Stopwatch cas)
+        {
+            string startTest = test;
+
+            if (maska.Length > ++pozice) ConvertType(ref start, ref end, maska[pozice].ToString());
+
+            for (char i = start; i <= end; i++)
+            {
+                test = startTest + i.ToString();
+                
+                //Output :) 
+                Debug.WriteLine(test);
+
+                if (test.Length < min)
+                {
+                    AddLetter(ref test, min, max, start, end, ref prolomeno, pozice, maska, ref cas);
+                }
+
+                else
+                {
+                    using (MD5 md5Hash = MD5.Create())
+                    {
+                        string testHash = GetMd5Hash(md5Hash, test);
+
+                        foreach (KeyValuePair<string, string> zaznam in data)
+                        {
+                            if (VerifyMd5Hash(zaznam.Value, testHash))
+                            {
+                                PridatZaznamDoSouboru(loginId + zaznam.Key + ", " + md5Id + test + " po " + cas.Elapsed + " sec");
+                                prolomeno++;
+                                if (data.Count == prolomeno)
+                                {
+                                    PridatZaznamDoSouboru(string.Format("Z {0} hesel bylo {1} prolomeno pomoci BruteForce útoku", data.Count, prolomeno));
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    if (test.Length < max)
+                    {
+                        AddLetter(ref test, min, max, start, end, ref prolomeno, pozice, maska, ref cas);
+                    }
+
+                }
+            }
+        }
+
+        void ConvertType(ref char start, ref char end, string type)
+        {
+            switch (type)
+            {
+                case "c":
+                    start = 'a';
+                    end = 'z';
+                    break;
+                case "C":
+                    start = 'A';
+                    end = 'Z';
+                    break;
+                case "d":
+                    start = '0';
+                    end = '9';
+                    break;
+                case "s":
+                    start = '!';
+                    end = '/';
+                    break;
+                case "?":
+                    start = '0';
+                    end = 'z';
+                    break;
+                default:
+                    start = 'a';
+                    end = 'z';
+                    break;
+            }
+        }
+
+        void PridatZaznamDoSouboru(string radek)
+        {
+            using (StreamWriter writer = File.AppendText(VystupniCesta))
+            {
+                writer.WriteLine(radek);
+            }
         }
 
         string GetMd5Hash(MD5 md5Hash, string input)
