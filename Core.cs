@@ -14,12 +14,13 @@ namespace MD5Cracker
     {
         private Encoding encoding = Encoding.UTF8;
         private List<KeyValuePair<string, string>> data;
-        string loginId = "username: ";
-        string md5Id = "password: ";
+        private Thread vlakno;
+        private string loginId = "username: ";
+        private string md5Id = "password: ";
         public string HeslaCesta { get; set; }
         public string SlovnikCesta { get; set; }
         public string VystupniCesta { get; set; }
-
+             
         public void NacistSoubory(string cesta)
         {
             HeslaCesta = Path.GetFullPath(cesta);
@@ -35,27 +36,38 @@ namespace MD5Cracker
 
         public void SpustitLamani()
         {
-            Thread vlakno = new Thread(delegate() { ZjistitHesla(); });
-            vlakno.Name = "Lámání MD5";
+            vlakno = new Thread(delegate() { ZjistitHesla(); });
+            vlakno.IsBackground = true;
+            vlakno.Name = "Lámání MD5 slovník";
             vlakno.Start();
         }
 
         public void SpustitLamani(string maska)
         {
-            Thread vlakno = new Thread(delegate() { BruteForce(maska); });
-            vlakno.Name = "Lámání MD5";
+            vlakno = new Thread(delegate() { BruteForce(maska); });
+            vlakno.IsBackground = true;
+            vlakno.Name = "Lámání MD5 maska";
             vlakno.Start();
         }
 
         public void SpustitLamani(int min, int max, string type)
         {
-            Thread vlakno = new Thread(delegate() { BruteForce(min, max, type); });
-            vlakno.Name = "Lámání MD5";
+            vlakno = new Thread(delegate() { BruteForce(min, max, type); });
+            vlakno.IsBackground = true;
+            vlakno.Name = "Lámání MD5 délka";
             vlakno.Start();
+        }
+
+        public void ZastavitLamani()
+        {
+            vlakno.Abort();
         }
 
         void ZjistitHesla()
         {
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            PridatZaznamDoSouboru(string.Format("Hledání hesla pomocí slovníku {0} zahájeno ve {1}", SlovnikCesta.Substring(SlovnikCesta.LastIndexOf("\\") + 1), DateTime.Now.TimeOfDay));
+
             int prolomeno = 0;
             foreach (string slovnikSlovo in File.ReadLines(SlovnikCesta, encoding))
             {
@@ -65,16 +77,19 @@ namespace MD5Cracker
                 {
                     if (VerifyMd5Hash(zaznam.Value, hashSlovnik))
                     {
-                        PridatZaznamDoSouboru(loginId + zaznam.Key + ", " + md5Id + slovnikSlovo);
+                        PridatZaznamDoSouboru(loginId + zaznam.Key + ", " + md5Id + slovnikSlovo + " po " + stopwatch.Elapsed + " sec");
                         prolomeno++;
                         if (data.Count == prolomeno)
                         {
-                            PridatZaznamDoSouboru(string.Format("Z {0} hesel bylo {1} prolomeno pomoci slovníkového útoku", data.Count, prolomeno));
+                            //Info když najde všechny dřív než projde slovník
+                            PridatZaznamDoSouboru(string.Format("Z {0} hesel bylo {1} prolomeno pomoci slovníkového útoku za {2}", data.Count, prolomeno, stopwatch.Elapsed));
                             return;
                         }
                     }
                 }
             }
+            //Info když projde slovník a nenašel všechny hesla
+            PridatZaznamDoSouboru(string.Format("Z {0} hesel bylo {1} prolomeno pomoci slovníkového útoku za {2}", data.Count, prolomeno, stopwatch.Elapsed));
         }
 
         void BruteForce(int min, int max, string type)
@@ -85,25 +100,29 @@ namespace MD5Cracker
             char start = 'a';
             char end = 'z';
             int prolomeno = 0;
+            int kombinace = 0;
 
             string test = "";
 
             ConvertType(ref start, ref end, type);
 
             Stopwatch stopwatch = Stopwatch.StartNew();
-            PridatZaznamDoSouboru(string.Format("Hledání hesla ve tvaru {0} zahájeno ve {1}", type, DateTime.Now.TimeOfDay));
+            PridatZaznamDoSouboru(string.Format("Hledání hesla formátu {0} o minimální délce {1} a maximální {2} pomocí BruteForce útoku zahájeno ve {3}", type, min, max, DateTime.Now.TimeOfDay));
 
             //17.4.2015 přidal jsem rovnítka nebo to bylo dobře? 
             //18.4.2015 Když už délka toho testovaného řetězce dosáhla maximální délky, tak se tam určitě nemá přidávat další písmeno...a co se týče minimální délky, tak kdybys ji nastavil na 0, tak by ta moje původní podmínka nefungovala, ale to jsem nepředpokládal
-            if (test.Length <= min && test.Length < max)
-                AddLetter(ref test, min, max, start, end, ref prolomeno, -1, type, ref stopwatch);
+            if (test.Length <= min && test.Length < max) AddLetter(ref test, min, max, start, end, ref prolomeno, -1, type, ref stopwatch, ref kombinace);
+
+            PridatZaznamDoSouboru(string.Format("Z {0} hesel bylo {1} prolomeno pomoci BruteForce útoku za {2} sekund, bylo vyzkoušeno {3} kombinací", data.Count, prolomeno, stopwatch.Elapsed, kombinace));
         }
 
+        //BruteForce s maskou hesla
         void BruteForce(string format)
         {
             char start = 'a';
             char end = 'z';
             int prolomeno = 0;
+            int kombinace = 0;
 
             string test = "";
 
@@ -112,11 +131,12 @@ namespace MD5Cracker
             Stopwatch stopwatch = Stopwatch.StartNew();
             PridatZaznamDoSouboru(string.Format("Hledání hesla ve tvaru {0} zahájeno ve {1}", format, DateTime.Now.TimeOfDay));
 
-            if (test.Length < format.Length)
-                AddLetter(ref test, format.Length, format.Length, start, end, ref prolomeno, -1, format, ref stopwatch);
+            if (test.Length < format.Length) AddLetter(ref test, format.Length, format.Length, start, end, ref prolomeno, -1, format, ref stopwatch, ref kombinace);
+
+            PridatZaznamDoSouboru(string.Format("Z {0} hesel bylo {1} prolomeno pomoci BruteForce útoku za {2} sekund, bylo vyzkoušeno {3} kombinací", data.Count, prolomeno, stopwatch.Elapsed, kombinace));
         }
 
-        void AddLetter(ref string test, int min, int max, char start, char end, ref int prolomeno, int pozice, string maska, ref Stopwatch cas)
+        void AddLetter(ref string test, int min, int max, char start, char end, ref int prolomeno, int pozice, string maska, ref Stopwatch cas, ref int kombinace)
         {
             string startTest = test;
 
@@ -126,16 +146,16 @@ namespace MD5Cracker
             {
                 test = startTest + i.ToString();
 
-                //Output :) 
-                Debug.WriteLine(test);
-
+                  
                 if (test.Length < min)
                 {
-                    AddLetter(ref test, min, max, start, end, ref prolomeno, pozice, maska, ref cas);
+                    AddLetter(ref test, min, max, start, end, ref prolomeno, pozice, maska, ref cas, ref kombinace);
                 }
                 else
                 {
                     string testHash = GetMd5Hash(test);
+
+                    kombinace++;
 
                     foreach (KeyValuePair<string, string> zaznam in data)
                     {
@@ -145,7 +165,6 @@ namespace MD5Cracker
                             prolomeno++;
                             if (data.Count == prolomeno)
                             {
-                                PridatZaznamDoSouboru(string.Format("Z {0} hesel bylo {1} prolomeno pomoci BruteForce útoku", data.Count, prolomeno));
                                 return;
                             }
                         }
@@ -154,12 +173,14 @@ namespace MD5Cracker
 
                     if (test.Length < max)
                     {
-                        AddLetter(ref test, min, max, start, end, ref prolomeno, pozice, maska, ref cas);
+                        AddLetter(ref test, min, max, start, end, ref prolomeno, pozice, maska, ref cas, ref kombinace);
                     }
 
                 }
             }
         }
+
+        #region Servisni
 
         void ConvertType(ref char start, ref char end, string type)
         {
@@ -191,6 +212,8 @@ namespace MD5Cracker
                     break;
             }
         }
+
+        
 
         void PridatZaznamDoSouboru(string radek)
         {
@@ -238,5 +261,7 @@ namespace MD5Cracker
                 return false;
             }
         }
+
+        #endregion Servisni
     }
 }

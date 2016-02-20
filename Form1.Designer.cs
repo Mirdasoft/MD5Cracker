@@ -78,7 +78,6 @@
             // 
             // bNacistSlovnik
             // 
-            this.bNacistSlovnik.Enabled = false;
             this.bNacistSlovnik.Location = new System.Drawing.Point(199, 77);
             this.bNacistSlovnik.Name = "bNacistSlovnik";
             this.bNacistSlovnik.Size = new System.Drawing.Size(73, 20);
@@ -89,7 +88,6 @@
             // 
             // tbSlovnikCesta
             // 
-            this.tbSlovnikCesta.Enabled = false;
             this.tbSlovnikCesta.Location = new System.Drawing.Point(12, 77);
             this.tbSlovnikCesta.Name = "tbSlovnikCesta";
             this.tbSlovnikCesta.Size = new System.Drawing.Size(181, 20);
@@ -97,19 +95,19 @@
             // 
             // bSpustitLamani
             // 
-            this.bSpustitLamani.BackColor = System.Drawing.Color.Red;
+            this.bSpustitLamani.BackColor = System.Drawing.Color.ForestGreen;
             this.bSpustitLamani.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bSpustitLamani.Location = new System.Drawing.Point(199, 203);
+            this.bSpustitLamani.Location = new System.Drawing.Point(199, 126);
             this.bSpustitLamani.Name = "bSpustitLamani";
             this.bSpustitLamani.Size = new System.Drawing.Size(75, 42);
             this.bSpustitLamani.TabIndex = 7;
-            this.bSpustitLamani.Text = "Spustit lámání MD5";
+            this.bSpustitLamani.Text = "Spustit lámání";
             this.bSpustitLamani.UseVisualStyleBackColor = false;
             this.bSpustitLamani.Click += new System.EventHandler(this.bSpustitLamani_Click);
             // 
             // bUlozitDo
             // 
-            this.bUlozitDo.Location = new System.Drawing.Point(199, 251);
+            this.bUlozitDo.Location = new System.Drawing.Point(199, 252);
             this.bUlozitDo.Name = "bUlozitDo";
             this.bUlozitDo.Size = new System.Drawing.Size(73, 20);
             this.bUlozitDo.TabIndex = 9;
@@ -119,7 +117,7 @@
             // 
             // tbVystupniCesta
             // 
-            this.tbVystupniCesta.Location = new System.Drawing.Point(12, 252);
+            this.tbVystupniCesta.Location = new System.Drawing.Point(12, 253);
             this.tbVystupniCesta.Name = "tbVystupniCesta";
             this.tbVystupniCesta.Size = new System.Drawing.Size(181, 20);
             this.tbVystupniCesta.TabIndex = 8;
@@ -127,7 +125,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 233);
+            this.label2.Location = new System.Drawing.Point(12, 234);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(84, 13);
             this.label2.TabIndex = 10;
@@ -136,6 +134,7 @@
             // rbSlovnik
             // 
             this.rbSlovnik.AutoSize = true;
+            this.rbSlovnik.Checked = true;
             this.rbSlovnik.Location = new System.Drawing.Point(12, 54);
             this.rbSlovnik.Name = "rbSlovnik";
             this.rbSlovnik.Size = new System.Drawing.Size(103, 17);
@@ -152,7 +151,6 @@
             this.rbBruteForce.Name = "rbBruteForce";
             this.rbBruteForce.Size = new System.Drawing.Size(80, 17);
             this.rbBruteForce.TabIndex = 13;
-            this.rbBruteForce.TabStop = true;
             this.rbBruteForce.Text = "Brute Force";
             this.rbBruteForce.UseVisualStyleBackColor = true;
             this.rbBruteForce.CheckedChanged += new System.EventHandler(this.rbBruteForce_CheckedChanged);
@@ -172,7 +170,6 @@
             this.rbBruteForce2.Name = "rbBruteForce2";
             this.rbBruteForce2.Size = new System.Drawing.Size(89, 17);
             this.rbBruteForce2.TabIndex = 15;
-            this.rbBruteForce2.TabStop = true;
             this.rbBruteForce2.Text = "Brute Force 2";
             this.rbBruteForce2.UseVisualStyleBackColor = true;
             this.rbBruteForce2.CheckedChanged += new System.EventHandler(this.rbBruteForce2_CheckedChanged);
@@ -182,12 +179,6 @@
             this.formatCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.formatCombo.Enabled = false;
             this.formatCombo.FormattingEnabled = true;
-            this.formatCombo.Items.AddRange(new object[] {
-            "Lower-Case",
-            "Upper-Case",
-            "Digits",
-            "Special Characters",
-            "Everything"});
             this.formatCombo.Location = new System.Drawing.Point(12, 176);
             this.formatCombo.Name = "formatCombo";
             this.formatCombo.Size = new System.Drawing.Size(181, 21);
@@ -196,7 +187,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 206);
+            this.label3.Location = new System.Drawing.Point(12, 207);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(30, 13);
             this.label3.TabIndex = 18;
@@ -205,7 +196,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(98, 206);
+            this.label4.Location = new System.Drawing.Point(98, 207);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(33, 13);
             this.label4.TabIndex = 19;
@@ -214,7 +205,7 @@
             // tbMin
             // 
             this.tbMin.Enabled = false;
-            this.tbMin.Location = new System.Drawing.Point(45, 203);
+            this.tbMin.Location = new System.Drawing.Point(45, 204);
             this.tbMin.Minimum = new decimal(new int[] {
             1,
             0,
@@ -233,7 +224,7 @@
             // tbMax
             // 
             this.tbMax.Enabled = false;
-            this.tbMax.Location = new System.Drawing.Point(137, 203);
+            this.tbMax.Location = new System.Drawing.Point(137, 204);
             this.tbMax.Minimum = new decimal(new int[] {
             1,
             0,
@@ -253,7 +244,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 284);
+            this.ClientSize = new System.Drawing.Size(284, 280);
             this.Controls.Add(this.tbMax);
             this.Controls.Add(this.tbMin);
             this.Controls.Add(this.label4);

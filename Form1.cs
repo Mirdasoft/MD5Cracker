@@ -47,12 +47,25 @@ namespace MD5Cracker
 
         private void bSpustitLamani_Click(object sender, EventArgs e)
         {
+            if (bSpustitLamani.BackColor == Color.Red)
+            {
+                core.ZastavitLamani();
+                bSpustitLamani.BackColor = Color.Green;
+                bSpustitLamani.Text = "Spustit lámání";
+            }
+            else
+            {
+            bSpustitLamani.BackColor = Color.Red;
+            bSpustitLamani.Text = "Zastavit lámání";
+            
             if (rbSlovnik.Checked)
                 core.SpustitLamani();
             else if (rbBruteForce.Checked)
                 core.SpustitLamani(tbPasswordMask.Text);
             else if (rbBruteForce2.Checked)
-                core.SpustitLamani(Convert.ToInt32(tbMin.Value), Convert.ToInt32(tbMax.Value), formatCombo.SelectedText);
+                core.SpustitLamani(Convert.ToInt32(tbMin.Value), Convert.ToInt32(tbMax.Value), formatCombo.SelectedValue.ToString());
+
+            }                      
         }
 
         private void bUlozitDo_Click(object sender, EventArgs e)
@@ -70,7 +83,15 @@ namespace MD5Cracker
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            List<KeyValuePair<string,string>> comboBoxData = new List<KeyValuePair<string,string>>();
+            comboBoxData.Add(new KeyValuePair<string,string>("Malá písmena", "c"));
+            comboBoxData.Add(new KeyValuePair<string,string>("Velká písmena", "C"));
+            comboBoxData.Add(new KeyValuePair<string,string>("Číslice", "d"));
+            comboBoxData.Add(new KeyValuePair<string,string>("Speciální znaky", "s"));
+            comboBoxData.Add(new KeyValuePair<string,string>("Vše", "?"));
+            formatCombo.DisplayMember = "Key";
+            formatCombo.ValueMember = "Value";
+            formatCombo.DataSource = comboBoxData;
         }
 
         private void rbSlovnik_CheckedChanged(object sender, EventArgs e)
