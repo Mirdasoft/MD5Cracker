@@ -47,7 +47,12 @@ namespace MD5Cracker
 
         private void bSpustitLamani_Click(object sender, EventArgs e)
         {
-            core.SpustitLamani(rbSlovnik.Checked, tbPasswordMask.Text);
+            if (rbSlovnik.Checked)
+                core.SpustitLamani();
+            else if (rbBruteForce.Checked)
+                core.SpustitLamani(tbPasswordMask.Text);
+            else if (rbBruteForce2.Checked)
+                core.SpustitLamani(Convert.ToInt32(tbMin.Value), Convert.ToInt32(tbMax.Value), formatCombo.SelectedText);
         }
 
         private void bUlozitDo_Click(object sender, EventArgs e)
@@ -91,6 +96,22 @@ namespace MD5Cracker
             else
             {
                 tbPasswordMask.Enabled = false;
+            }
+        }
+
+        private void rbBruteForce2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbBruteForce2.Checked)
+            {
+                formatCombo.Enabled = true;
+                tbMin.Enabled = true;
+                tbMax.Enabled = true;
+            }
+            else
+            {
+                formatCombo.Enabled = false;
+                tbMin.Enabled = false;
+                tbMax.Enabled = false;
             }
         }
     }

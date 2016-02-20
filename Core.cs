@@ -33,47 +33,46 @@ namespace MD5Cracker
             }
         }
 
-        public void SpustitLamani(bool slovnik, string maska)
+        public void SpustitLamani()
         {
-            Thread vlakno = new Thread(delegate() { ZjistitHesla(slovnik, maska); });
+            Thread vlakno = new Thread(delegate() { ZjistitHesla(); });
             vlakno.Name = "Lámání MD5";
             vlakno.Start();
-
         }
 
-        void ZjistitHesla(bool slovnik, string maska)
+        public void SpustitLamani(string maska)
         {
-      
-            //Nešel by ten using přesunout přímo do té metody GetMd5Hash? (takhle ho musím opisovat i na řádku 106)
-            using (MD5 md5Hash = MD5.Create())
-            {
-                if (slovnik)
-                {
-                    int prolomeno = 0;
-                    foreach (string slovnikSlovo in File.ReadLines(SlovnikCesta, encoding))
-                    {
-                        string hashSlovnik = GetMd5Hash(md5Hash, slovnikSlovo);
+            Thread vlakno = new Thread(delegate() { BruteForce(maska); });
+            vlakno.Name = "Lámání MD5";
+            vlakno.Start();
+        }
 
-                        foreach (KeyValuePair<string, string> zaznam in data)
+        public void SpustitLamani(int min, int max, string type)
+        {
+            Thread vlakno = new Thread(delegate() { BruteForce(min, max, type); });
+            vlakno.Name = "Lámání MD5";
+            vlakno.Start();
+        }
+
+        void ZjistitHesla()
+        {
+            int prolomeno = 0;
+            foreach (string slovnikSlovo in File.ReadLines(SlovnikCesta, encoding))
+            {
+                string hashSlovnik = GetMd5Hash(slovnikSlovo);
+
+                foreach (KeyValuePair<string, string> zaznam in data)
+                {
+                    if (VerifyMd5Hash(zaznam.Value, hashSlovnik))
+                    {
+                        PridatZaznamDoSouboru(loginId + zaznam.Key + ", " + md5Id + slovnikSlovo);
+                        prolomeno++;
+                        if (data.Count == prolomeno)
                         {
-                            if (VerifyMd5Hash(zaznam.Value, hashSlovnik))
-                            {
-                                PridatZaznamDoSouboru(loginId + zaznam.Key + ", " + md5Id + slovnikSlovo);
-                                prolomeno++;
-                                if (data.Count == prolomeno)
-                                {
-                                    PridatZaznamDoSouboru(string.Format("Z {0} hesel bylo {1} prolomeno pomoci slovníkového útoku", data.Count, prolomeno));
-                                    return;
-                                }
-                            }
+                            PridatZaznamDoSouboru(string.Format("Z {0} hesel bylo {1} prolomeno pomoci slovníkového útoku", data.Count, prolomeno));
+                            return;
                         }
                     }
-
-                }
-
-                else
-                {
-                    BruteForce(maska.Length, maska.Length, maska);
                 }
             }
         }
@@ -89,20 +88,32 @@ namespace MD5Cracker
 
             string test = "";
 
-            char[] maska = type.ToCharArray(0, type.Length);
-            ConvertType(ref start, ref end, maska[0].ToString());
+            ConvertType(ref start, ref end, type);
 
             Stopwatch stopwatch = Stopwatch.StartNew();
             PridatZaznamDoSouboru(string.Format("Hledání hesla ve tvaru {0} zahájeno ve {1}", type, DateTime.Now.TimeOfDay));
 
-            //přidal jsem rovnítka nebo to bylo dobře?
-            if (test.Length <= min && test.Length <= max)
+            //17.4.2015 přidal jsem rovnítka nebo to bylo dobře? 
+            //18.4.2015 Když už délka toho testovaného řetězce dosáhla maximální délky, tak se tam určitě nemá přidávat další písmeno...a co se týče minimální délky, tak kdybys ji nastavil na 0, tak by ta moje původní podmínka nefungovala, ale to jsem nepředpokládal
+            if (test.Length <= min && test.Length < max)
                 AddLetter(ref test, min, max, start, end, ref prolomeno, -1, type, ref stopwatch);
         }
 
         void BruteForce(string format)
         {
+            char start = 'a';
+            char end = 'z';
+            int prolomeno = 0;
 
+            string test = "";
+
+            ConvertType(ref start, ref end, format[0].ToString());
+
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            PridatZaznamDoSouboru(string.Format("Hledání hesla ve tvaru {0} zahájeno ve {1}", format, DateTime.Now.TimeOfDay));
+
+            if (test.Length < format.Length)
+                AddLetter(ref test, format.Length, format.Length, start, end, ref prolomeno, -1, format, ref stopwatch);
         }
 
         void AddLetter(ref string test, int min, int max, char start, char end, ref int prolomeno, int pozice, string maska, ref Stopwatch cas)
@@ -114,7 +125,7 @@ namespace MD5Cracker
             for (char i = start; i <= end; i++)
             {
                 test = startTest + i.ToString();
-                
+
                 //Output :) 
                 Debug.WriteLine(test);
 
@@ -122,27 +133,24 @@ namespace MD5Cracker
                 {
                     AddLetter(ref test, min, max, start, end, ref prolomeno, pozice, maska, ref cas);
                 }
-
                 else
                 {
-                    using (MD5 md5Hash = MD5.Create())
-                    {
-                        string testHash = GetMd5Hash(md5Hash, test);
+                    string testHash = GetMd5Hash(test);
 
-                        foreach (KeyValuePair<string, string> zaznam in data)
+                    foreach (KeyValuePair<string, string> zaznam in data)
+                    {
+                        if (VerifyMd5Hash(zaznam.Value, testHash))
                         {
-                            if (VerifyMd5Hash(zaznam.Value, testHash))
+                            PridatZaznamDoSouboru(loginId + zaznam.Key + ", " + md5Id + test + " po " + cas.Elapsed + " sec");
+                            prolomeno++;
+                            if (data.Count == prolomeno)
                             {
-                                PridatZaznamDoSouboru(loginId + zaznam.Key + ", " + md5Id + test + " po " + cas.Elapsed + " sec");
-                                prolomeno++;
-                                if (data.Count == prolomeno)
-                                {
-                                    PridatZaznamDoSouboru(string.Format("Z {0} hesel bylo {1} prolomeno pomoci BruteForce útoku", data.Count, prolomeno));
-                                    return;
-                                }
+                                PridatZaznamDoSouboru(string.Format("Z {0} hesel bylo {1} prolomeno pomoci BruteForce útoku", data.Count, prolomeno));
+                                return;
                             }
                         }
                     }
+
 
                     if (test.Length < max)
                     {
@@ -192,24 +200,28 @@ namespace MD5Cracker
             }
         }
 
-        string GetMd5Hash(MD5 md5Hash, string input)
+        string GetMd5Hash(string input)
         {
-            // Convert the input string to a byte array and compute the hash.
-            byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
-
-            // Create a new Stringbuilder to collect the bytes
-            // and create a string.
-            StringBuilder sBuilder = new StringBuilder();
-
-            // Loop through each byte of the hashed data 
-            // and format each one as a hexadecimal string.
-            for (int i = 0; i < data.Length; i++)
+            using (MD5 md5Hash = MD5.Create())
             {
-                sBuilder.Append(data[i].ToString("x2"));
-            }
 
-            // Return the hexadecimal string.
-            return sBuilder.ToString();
+                // Convert the input string to a byte array and compute the hash.
+                byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+                // Create a new Stringbuilder to collect the bytes
+                // and create a string.
+                StringBuilder sBuilder = new StringBuilder();
+
+                // Loop through each byte of the hashed data 
+                // and format each one as a hexadecimal string.
+                for (int i = 0; i < data.Length; i++)
+                {
+                    sBuilder.Append(data[i].ToString("x2"));
+                }
+
+                // Return the hexadecimal string.
+                return sBuilder.ToString();
+            }
         }
 
         bool VerifyMd5Hash(string hash1, string hash2)

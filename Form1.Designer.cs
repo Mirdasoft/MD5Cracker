@@ -40,6 +40,14 @@
             this.rbSlovnik = new System.Windows.Forms.RadioButton();
             this.rbBruteForce = new System.Windows.Forms.RadioButton();
             this.tbPasswordMask = new System.Windows.Forms.TextBox();
+            this.rbBruteForce2 = new System.Windows.Forms.RadioButton();
+            this.formatCombo = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tbMin = new System.Windows.Forms.NumericUpDown();
+            this.tbMax = new System.Windows.Forms.NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)(this.tbMin)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbMax)).BeginInit();
             this.SuspendLayout();
             // 
             // tbHeslaCesta
@@ -91,7 +99,7 @@
             // 
             this.bSpustitLamani.BackColor = System.Drawing.Color.Red;
             this.bSpustitLamani.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bSpustitLamani.Location = new System.Drawing.Point(199, 180);
+            this.bSpustitLamani.Location = new System.Drawing.Point(199, 203);
             this.bSpustitLamani.Name = "bSpustitLamani";
             this.bSpustitLamani.Size = new System.Drawing.Size(75, 42);
             this.bSpustitLamani.TabIndex = 7;
@@ -101,7 +109,7 @@
             // 
             // bUlozitDo
             // 
-            this.bUlozitDo.Location = new System.Drawing.Point(199, 229);
+            this.bUlozitDo.Location = new System.Drawing.Point(199, 251);
             this.bUlozitDo.Name = "bUlozitDo";
             this.bUlozitDo.Size = new System.Drawing.Size(73, 20);
             this.bUlozitDo.TabIndex = 9;
@@ -111,7 +119,7 @@
             // 
             // tbVystupniCesta
             // 
-            this.tbVystupniCesta.Location = new System.Drawing.Point(12, 229);
+            this.tbVystupniCesta.Location = new System.Drawing.Point(12, 252);
             this.tbVystupniCesta.Name = "tbVystupniCesta";
             this.tbVystupniCesta.Size = new System.Drawing.Size(181, 20);
             this.tbVystupniCesta.TabIndex = 8;
@@ -119,7 +127,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 213);
+            this.label2.Location = new System.Drawing.Point(12, 233);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(84, 13);
             this.label2.TabIndex = 10;
@@ -157,11 +165,101 @@
             this.tbPasswordMask.Size = new System.Drawing.Size(181, 20);
             this.tbPasswordMask.TabIndex = 14;
             // 
+            // rbBruteForce2
+            // 
+            this.rbBruteForce2.AutoSize = true;
+            this.rbBruteForce2.Location = new System.Drawing.Point(12, 152);
+            this.rbBruteForce2.Name = "rbBruteForce2";
+            this.rbBruteForce2.Size = new System.Drawing.Size(89, 17);
+            this.rbBruteForce2.TabIndex = 15;
+            this.rbBruteForce2.TabStop = true;
+            this.rbBruteForce2.Text = "Brute Force 2";
+            this.rbBruteForce2.UseVisualStyleBackColor = true;
+            this.rbBruteForce2.CheckedChanged += new System.EventHandler(this.rbBruteForce2_CheckedChanged);
+            // 
+            // formatCombo
+            // 
+            this.formatCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.formatCombo.Enabled = false;
+            this.formatCombo.FormattingEnabled = true;
+            this.formatCombo.Items.AddRange(new object[] {
+            "Lower-Case",
+            "Upper-Case",
+            "Digits",
+            "Special Characters",
+            "Everything"});
+            this.formatCombo.Location = new System.Drawing.Point(12, 176);
+            this.formatCombo.Name = "formatCombo";
+            this.formatCombo.Size = new System.Drawing.Size(181, 21);
+            this.formatCombo.TabIndex = 16;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 206);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(30, 13);
+            this.label3.TabIndex = 18;
+            this.label3.Text = "Min: ";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(98, 206);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(33, 13);
+            this.label4.TabIndex = 19;
+            this.label4.Text = "Max: ";
+            // 
+            // tbMin
+            // 
+            this.tbMin.Enabled = false;
+            this.tbMin.Location = new System.Drawing.Point(45, 203);
+            this.tbMin.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.tbMin.Name = "tbMin";
+            this.tbMin.Size = new System.Drawing.Size(47, 20);
+            this.tbMin.TabIndex = 21;
+            this.tbMin.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tbMin.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // tbMax
+            // 
+            this.tbMax.Enabled = false;
+            this.tbMax.Location = new System.Drawing.Point(137, 203);
+            this.tbMax.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.tbMax.Name = "tbMax";
+            this.tbMax.Size = new System.Drawing.Size(47, 20);
+            this.tbMax.TabIndex = 22;
+            this.tbMax.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tbMax.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.ClientSize = new System.Drawing.Size(284, 284);
+            this.Controls.Add(this.tbMax);
+            this.Controls.Add(this.tbMin);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.formatCombo);
+            this.Controls.Add(this.rbBruteForce2);
             this.Controls.Add(this.tbPasswordMask);
             this.Controls.Add(this.rbBruteForce);
             this.Controls.Add(this.rbSlovnik);
@@ -177,6 +275,8 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.tbMin)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbMax)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -196,6 +296,12 @@
         private System.Windows.Forms.RadioButton rbSlovnik;
         private System.Windows.Forms.RadioButton rbBruteForce;
         private System.Windows.Forms.TextBox tbPasswordMask;
+        private System.Windows.Forms.RadioButton rbBruteForce2;
+        private System.Windows.Forms.ComboBox formatCombo;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.NumericUpDown tbMin;
+        private System.Windows.Forms.NumericUpDown tbMax;
     }
 }
 
